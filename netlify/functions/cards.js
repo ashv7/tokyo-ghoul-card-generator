@@ -1,36 +1,10 @@
 const jwt = require('jsonwebtoken');
-const fs = require('fs').promises;
-const path = require('path');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'tokyo-ghoul-secret-key-change-in-production';
-const USERS_FILE = path.join(process.cwd(), 'data', 'users.json');
 
-// Ensure data directory exists
-async function ensureDataDir() {
-  const dataDir = path.join(process.cwd(), 'data');
-  try {
-    await fs.access(dataDir);
-  } catch {
-    await fs.mkdir(dataDir, { recursive: true });
-  }
-}
-
-// Read users from file
-async function readUsers() {
-  try {
-    await ensureDataDir();
-    const data = await fs.readFile(USERS_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    return [];
-  }
-}
-
-// Write users to file
-async function writeUsers(users) {
-  await ensureDataDir();
-  await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2));
-}
+// Simple in-memory storage (shared with auth function via external users array)
+// In production, this should use MongoDB
+const userCards = new Map();
 
 // Verify JWT token
 function verifyToken(authHeader) {
@@ -54,15 +28,11 @@ exports.handler = async (event) => {
 
   try {
     const decoded = verifyToken(event.headers.authorization);
-    const users = await readUsers();
-    const userIndex = users.findIndex(u => u.id === decoded.id);
+    const userId = decoded.id;
 
-    if (userIndex === -1) {
-      return {
-        statusCode: 404,
-        headers,
-        body: JSON.stringify({ error: 'User not found' }),
-      };
+    // Initialize user's cards if not exists
+    if (!userCards.has(userId)) {
+      userCards.set(userId, []);
     }
 
     // GET - Retrieve user's cards
@@ -70,17 +40,13 @@ exports.handler = async (event) => {
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify({ cards: users[userIndex].cards || [] }),
+        body: JSON.stringify({ cards: userCards.get(userId) || [] }),
       };
     }
 
     // POST - Save a new card
     if (event.httpMethod === 'POST') {
       const card = JSON.parse(event.body);
-      
-      if (!users[userIndex].cards) {
-        users[userIndex].cards = [];
-      }
 
       // Add card with timestamp
       const newCard = {
@@ -89,8 +55,9 @@ exports.handler = async (event) => {
         createdAt: new Date().toISOString(),
       };
 
-      users[userIndex].cards.push(newCard);
-      await writeUsers(users);
+      const cards = userCards.get(userId);
+      cards.push(newCard);
+      userCards.set(userId, cards);
 
       return {
         statusCode: 200,
@@ -102,15 +69,9 @@ exports.handler = async (event) => {
     // DELETE - Remove a card
     if (event.httpMethod === 'DELETE') {
       const { cardId } = JSON.parse(event.body);
-      
-      if (!users[userIndex].cards) {
-        users[userIndex].cards = [];
-      }
 
-      users[userIndex].cards = users[userIndex].cards.filter(
-        c => c.id !== cardId
-      );
-      await writeUsers(users);
+      const cards = userCards.get(userId).filter(c => c.id !== cardId);
+      userCards.set(userId, cards);
 
       return {
         statusCode: 200,

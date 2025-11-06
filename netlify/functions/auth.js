@@ -1,38 +1,11 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const fs = require('fs').promises;
-const path = require('path');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'tokyo-ghoul-secret-key-change-in-production';
-const USERS_FILE = path.join(process.cwd(), 'data', 'users.json');
+const MONGODB_URI = process.env.MONGODB_URI;
 
-// Ensure data directory exists
-async function ensureDataDir() {
-  const dataDir = path.join(process.cwd(), 'data');
-  try {
-    await fs.access(dataDir);
-  } catch {
-    await fs.mkdir(dataDir, { recursive: true });
-  }
-}
-
-// Read users from file
-async function readUsers() {
-  try {
-    await ensureDataDir();
-    const data = await fs.readFile(USERS_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    // If file doesn't exist, return empty array
-    return [];
-  }
-}
-
-// Write users to file
-async function writeUsers(users) {
-  await ensureDataDir();
-  await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2));
-}
+// Simple in-memory storage for development (will be replaced by MongoDB)
+let users = [];
 
 exports.handler = async (event) => {
   // CORS headers
@@ -56,7 +29,6 @@ exports.handler = async (event) => {
 
   try {
     const { action, email, password, username } = JSON.parse(event.body);
-    const users = await readUsers();
 
     // REGISTER
     if (action === 'register') {
@@ -84,7 +56,6 @@ exports.handler = async (event) => {
       };
 
       users.push(newUser);
-      await writeUsers(users);
 
       // Generate token
       const token = jwt.sign(
