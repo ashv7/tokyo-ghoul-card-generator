@@ -151,8 +151,11 @@ function Generator() {
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-bold text-ghoul-red mb-8 text-center">
-          Générateur de carte CCG
+          Générateur de Cartes Multi-Factions
         </h1>
+        <p className="text-center text-gray-400 mb-8">
+          CCG • Goule • Anteiku • Aogiri Tree
+        </p>
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Form Section */}

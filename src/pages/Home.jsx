@@ -14,7 +14,7 @@ function Home() {
             Tokyo Ghoul Card Generator
           </h1>
           <p className="text-2xl text-gray-300 mb-12">
-            Créez votre carte d'inspecteur CCG personnalisée
+            Créez votre carte personnalisée : Inspecteur CCG, Goule, Anteiku ou Aogiri Tree
           </p>
 
           {user ? (
@@ -93,19 +93,22 @@ function Home() {
           </h2>
           <div className="text-gray-300 space-y-4">
             <p>
-              Plongez dans l'univers de Tokyo Ghoul et créez votre propre carte d'inspecteur du CCG.
-              Notre système intelligent génère des personnages uniques avec :
+              Plongez dans l'univers de Tokyo Ghoul et créez votre propre carte personnalisée.
+              Choisissez votre faction et notre système intelligent génère des personnages uniques avec :
             </p>
             <ul className="list-disc list-inside space-y-2 ml-4">
-              <li>8 compétences différentes avec des scores aléatoires</li>
-              <li>Un grade CCG calculé selon vos performances</li>
-              <li>Une arme adaptée à votre profil de combattant</li>
-              <li>Un type d'inspecteur (Terrain ou Bureau)</li>
-              <li>Un identifiant unique avec QR code</li>
-              <li>Une description immersive de votre personnage</li>
+              <li><strong>CCG (Commission Contre les Goules)</strong> : Inspecteurs avec grades, quinques et divisions officielles</li>
+              <li><strong>Goule</strong> : Créatures avec kagune, types RC et capacités de prédation</li>
+              <li><strong>Anteiku</strong> : Membres du café pacifiste avec rôles et philosophie de coexistence</li>
+              <li><strong>Aogiri Tree</strong> : Organisation militante avec rangs, objectifs et pouvoirs destructeurs</li>
+              <li>8 compétences uniques par faction avec scores aléatoires</li>
+              <li>Système de rareté de D à SS+ pour chaque faction</li>
+              <li>Armes et capacités adaptées à votre profil</li>
+              <li>Identifiant unique avec QR code</li>
+              <li>Description immersive de votre personnage</li>
             </ul>
             <p className="mt-4">
-              Exportez vos cartes, partagez-les avec vos amis et constituez votre collection !
+              Exportez vos cartes en format carte complète ou carte d'identité, partagez-les avec vos amis et constituez votre collection multi-factions !
             </p>
           </div>
         </div>

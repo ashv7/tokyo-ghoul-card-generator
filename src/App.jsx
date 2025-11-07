@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 import Home from './pages/Home'
 import Generator from './pages/Generator'
 import Collection from './pages/Collection'
@@ -30,8 +31,9 @@ function ProtectedRoute({ children }) {
 function AppContent() {
   return (
     <Router>
-      <div className="min-h-screen bg-tokyo-gradient">
+      <div className="min-h-screen bg-tokyo-gradient flex flex-col">
         <Navbar />
+        <div className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -93,6 +95,8 @@ function AppContent() {
             } 
           />
         </Routes>
+        </div>
+        <Footer />
       </div>
     </Router>
   )
